@@ -1,4 +1,4 @@
-# pygame-utils
+# artbit-pygame-utils
 
 A collection of utility modules for pygame development, providing essential tools for game development including performance tracking, event systems, animations, input handling, and more.
 
@@ -16,17 +16,17 @@ These utilities are used in **[Zen Rage](https://store.steampowered.com/app/2934
 ## Installation
 
 ```bash
-pip install pygame-utils
+pip install artbit-pygame-utils
 ```
 
 For optional features:
 
 ```bash
 # With pygame support
-pip install pygame-utils[pygame]
+pip install artbit-pygame-utils[pygame]
 
 # With all optional dependencies
-pip install pygame-utils[all]
+pip install artbit-pygame-utils[all]
 ```
 
 ## Modules
