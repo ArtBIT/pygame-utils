@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pygame-utils"
+name = "artbit-pygame-utils"
 version = "0.1.0"
 description = "A collection of utility modules for pygame development"
 readme = "README.md"
@@ -47,4 +47,8 @@ packages = ["pygame_utils"]
 
 [tool.setuptools.package-data]
 pygame_utils = ["py.typed"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
 
