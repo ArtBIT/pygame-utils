@@ -136,41 +136,10 @@ score = registry.read('stats.score', default=0)
 registry.close()
 ```
 
-### Input - Input Handling
-
-Keyboard and mouse input management for pygame.
-
-```python
-import pygame
-from pygame_utils import Input
-
-pygame.init()
-screen = pygame.display.set_mode((800, 600))
-input_handler = Input()
-
-# Register actions
-input_handler.actions.register('jump', ['space', 'w'])
-input_handler.actions.register('shoot', ['mouse_button_1', 'z'])
-
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        input_handler.handle_event(event)
-    
-    # Check input
-    if input_handler.actions.is_pressed('jump'):
-        print("Jump!")
-    
-    if input_handler.is_down('a'):
-        print("Moving left")
-    
-    # Update input state
-    input_handler.update()
-```
 
 ### Pool - Object Pooling
+
+[What is Object Pooling](https://en.wikipedia.org/wiki/Object_pool_pattern)
 
 Efficient object reuse to reduce allocation overhead.
 
@@ -233,6 +202,8 @@ if stats:
 ```
 
 ### TexturePacker - Sprite Atlas Parser
+
+[TexturePacker](https://free-tex-packer.com/app/)
 
 Parse TexturePacker JSON exports and extract sprite frames.
 
@@ -335,8 +306,7 @@ tweens.update()
 | events | None | - |
 | easing | None | - |
 | logger | None | - |
-| registry | None | appdirs |
-| input | pygame | pynput (for global hotkeys) |
+| registry | None | - |
 | pool | None | - |
 | stopwatch | None | - |
 | texturepacker | pygame | - |
