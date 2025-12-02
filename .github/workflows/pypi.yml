@@ -1,17 +1,17 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
-name: Python package
-
+name: PyPi package
+# ... (on: block remains the same, which is correct)
 on:
   push:
     branches: [ "main" ]
-    tags: [ '*' ]
+    tags: [ '*' ] # Run on any tag push
   pull_request:
     branches: [ "main" ]
 
 jobs:
-  build:
+  test: # Renamed the job to clearly separate testing from building
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -19,53 +19,64 @@ jobs:
         python-version: ["3.9", "3.10", "3.11"]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
-      run: |
-        pytest
-    - name: Install pypa/build
-      if: ${{ matrix.python-version == '3.11' }}
-      run: >-
-        python3 -m
-        pip install
-        build
-        --user
-    - name: Build a binary wheel and a source tarball
-      if: ${{ matrix.python-version == '3.11' }}
-      run: python3 -m build
-    - name: Store the distribution packages
-      uses: actions/upload-artifact@v4
-      if: ${{ matrix.python-version == '3.11' }}
-      with:
-        name: python-package-distributions
-        path: dist/
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      # ... (rest of install, lint, and test steps are unchanged)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install flake8 pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Lint with flake8
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - name: Test with pytest
+        run: |
+          pytest
+
+  # NEW JOB: Only runs on the tag push, after testing passes, and builds/uploads the artifact.
+  build_and_upload:
+    name: Build Python Distribution
+    runs-on: ubuntu-latest
+    needs: [test] # Must pass tests first
+    if: startsWith(github.ref, 'refs/tags/') # <--- Only runs on tag pushes
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.11 (for building)
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.11' # Only need one version to build
+
+      - name: Install build tool
+        run: python3 -m pip install build
+
+      - name: Build a binary wheel and a source tarball
+        run: python3 -m build
+
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+  # PUBLISH JOB: Now depends on the single 'build_and_upload' job
   publish-to-pypi:
     name: >-
       Publish Python 🐍 distribution 📦 to PyPI
-    if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
+    if: startsWith(github.ref, 'refs/tags/') # This check is redundant but harmless
     needs:
-    - build
+    - build_and_upload # Dependency changed to the new single build job
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/artbit-pygame-utils  # Replace <package-name> with your PyPI project name
+      url: https://pypi.org/p/artbit-pygame-utils
     permissions:
-      id-token: write  # IMPORTANT: mandatory for trusted publishing
+      id-token: write
     steps:
     - name: Download all the dists
       uses: actions/download-artifact@v4
