@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pygame-utils"
+version = "0.1.0"
+description = "A collection of utility modules for pygame development"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "MIT"}
+authors = [
+    {name = "pygame-utils contributors"}
+]
+keywords = ["pygame", "game-development", "utilities", "animation", "input", "events"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Games/Entertainment",
+]
+
+dependencies = []
+
+[project.optional-dependencies]
+pygame = ["pygame>=2.0.0"]
+pynput = ["pynput>=1.7.0"]
+appdirs = ["appdirs>=1.4.0"]
+all = ["pygame>=2.0.0", "pynput>=1.7.0", "appdirs>=1.4.0"]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/pygame-utils"
+Documentation = "https://github.com/yourusername/pygame-utils#readme"
+Repository = "https://github.com/yourusername/pygame-utils"
+Issues = "https://github.com/yourusername/pygame-utils/issues"
+
+[tool.setuptools]
+packages = ["pygame_utils"]
+
+[tool.setuptools.package-data]
+pygame_utils = ["py.typed"]
+
